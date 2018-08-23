@@ -1,22 +1,20 @@
 import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+
 import ImageAnimation from "./ImageAnimation";
+import ItemsGrid from "./ItemsGrid";
+import fakeItems from "./fakeItems";
+import ItemPage from "./ItemPage";
 
 class App extends Component {
   render() {
     return (
-      <div>
-        <ImageAnimation
-          startingWidth={400}
-          startingHeight={200}
-          startingX={200}
-          startingY={200}
-          endingWidth={1000}
-          endingHeight={400}
-          endingX={0}
-          endingY={0}
-          image="https://via.placeholder.com/400x400"
-        />
-      </div>
+      <Router>
+        <Switch>
+          <Route exact path="/item/:id" component={ItemPage} />
+          <Route render={() => <ItemsGrid items={fakeItems} />} />
+        </Switch>
+      </Router>
     );
   }
 }
