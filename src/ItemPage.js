@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import styled from "styled-components";
+import { Motion, spring } from "react-motion";
 
 import fakeItems from "./fakeItems";
+import { Consumer } from "./context";
 
 const Wrapper = styled.div`
   display: flex;
-  width: 100%;
+  position: absolute;
   flex-direction: column;
 `;
 const Image = styled.div`
@@ -23,12 +25,42 @@ class ItemPage extends Component {
     const item = fakeItems.filter(i => i._id === this.props.match.params.id)[0];
     if (!item) return <h1>Item Not Found.</h1>;
     const { name, picture, description } = item;
+    const endWidth = window.innerWidth;
+    const endHeight = window.innerHeight;
     return (
-      <Wrapper>
-        <Image image={picture} />
-        <Name>{name}</Name>
-        <p>{description}</p>
-      </Wrapper>
+      <Consumer>
+        {({ x, y, width, height }) => (
+          <Motion
+            defaultStyle={{
+              x: x,
+              y: y,
+              width: width,
+              height: height
+            }}
+            style={{
+              x: spring(0),
+              y: spring(0),
+              width: spring(endWidth),
+              height: spring(endHeight)
+            }}
+          >
+            {style => (
+              <Wrapper
+                style={{
+                  left: style.x,
+                  top: style.y,
+                  width: style.width,
+                  height: style.height
+                }}
+              >
+                <Image image={picture} />
+                <Name>{name}</Name>
+                <p>{description}</p>
+              </Wrapper>
+            )}
+          </Motion>
+        )}
+      </Consumer>
     );
   }
 }

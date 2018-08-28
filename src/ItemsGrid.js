@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
+import { Consumer, ActionTypes } from "./context";
+
 const Wrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -24,26 +26,36 @@ const Image = styled.div`
 const Name = styled.h4``;
 
 class ItemsGrid extends Component {
-  clickHandler = e => {
+  clickHandler = (dispatch, e) => {
     const width = e.currentTarget.offsetWidth;
     const height = e.currentTarget.offsetHeight;
     const x = e.currentTarget.offsetLeft;
     const y = e.currentTarget.offsetTop;
-    console.log(width, height, x, y);
+    dispatch({
+      type: ActionTypes.updateState,
+      payload: { x, y, width, height }
+    });
   };
   render = () => {
     const { items } = this.props;
     return (
-      <Wrapper>
-        {items.map(({ picture, name, _id }, index) => (
-          <Item key={index} onClick={this.clickHandler}>
-            <Link to={`/item/${_id}`}>
-              <Image image={picture} />
-              <Name>{name}</Name>
-            </Link>
-          </Item>
-        ))}
-      </Wrapper>
+      <Consumer>
+        {({ dispatch }) => (
+          <Wrapper>
+            {items.map(({ picture, name, _id }, index) => (
+              <Item
+                key={index}
+                onClick={this.clickHandler.bind(this, dispatch)}
+              >
+                <Link to={`/item/${_id}`}>
+                  <Image image={picture} />
+                  <Name>{name}</Name>
+                </Link>
+              </Item>
+            ))}
+          </Wrapper>
+        )}
+      </Consumer>
     );
   };
 }
